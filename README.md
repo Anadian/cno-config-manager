@@ -14,7 +14,17 @@
 - [License](#License)
 # Background
 # Install
+Example using [pnpm](https://pnpm.io/cli/add):
+```sh
+pnpm add --save cno-config-manager
+```
+It can, of course, also be installed by [npm](https://docs.npmjs.com/cli/v8/commands/npm-install) or [Yarn](https://yarnpkg.com/getting-started/usage) using the normal methods.
 # Usage
+```js
+import ConfigManager from 'cno-config-manager';
+
+ConfigManager.prepare( options );
+```
 # API
 # Contributing
 Changes are tracked in [CHANGELOG.md](CHANGELOG.md).

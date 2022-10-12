@@ -49,7 +49,6 @@
 		"ava": "^4.3.3",
 		"c8": "^7.12.0",
 		"coveralls": "^3.1.1",
-		"hjson": "^3.2.2",
 		"npm-check-updates": "^16.3.11",
 		"standard-version": "^9.5.0"
 	},
@@ -138,6 +137,9 @@
 		]
 	},
 	"dependencies": {
-		"cno-insp": "^1.0.0"
+		"ajv": "^8.11.0",
+		"application-log-winston-interface": "^3.1.0",
+		"cno-insp": "^1.0.0",
+		"hjson": "^3.2.2"
 	}
 }
