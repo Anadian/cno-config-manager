@@ -114,10 +114,12 @@ ConfigManager.prototype.loadFilePath = function( filepath_string, options = {} )
 	);
 	return _return;
 }
-ConfigManager.prototype.saveFilePath = function( filepath_string, options = {} ){
+ConfigManager.prototype.saveFilePath = function( filepath_string, options = { safe: false } ){
 	const FUNCTION_NAME = 'saveFilePath';
 	var return_error = null;
 	var _return = null;
+	var dirpath = '';
+	var mkdir_promise = null;
 	this.logger?.log({ function: FUNCTION_NAME, level: 'debug', message: `Received filepath_string: ${filepath_string}` });
 	if( filepath_string == '' && typeof(filepath_string) !== typeof('') ){
 		return_error = new TypeError('Parametre "filepath_string" is either empty or not a string.');
@@ -126,14 +128,34 @@ ConfigManager.prototype.saveFilePath = function( filepath_string, options = {} )
 	}
 	var json_string = JSON.stringify( this.configObject, null, '\t' );
 	this.logger.log({file: FILENAME, function: FUNCTION_NAME, level: 'debug', message: `json_string: ${json_string}`});
-	_return = FSNS.promises.writeFile( filepath_string, json_string, 'utf8' ).then(
+	if( options.safe === true ){
+		try{
+			dirpath = PathNS.dirname( filepath_string );
+		} catch(error){
+			return_error = new Error(`PathNS.dirname threw an error: ${error}`);
+			throw return_error;
+		}
+		mkdir_promise = FSNS.promises.mkdir( dirpath, { recursive: true } ).catch(
+			(error) => {
+				this.logger?.log({ function: FUNCTION_NAME, level: 'error', message: `FSNS.promises.mkdir threw an unexpected error: ${error}` });
+				throw error;
+			}
+		);
+	} else{
+		mkdir_promise = Promise.resolve();
+	}
+	_return = mkdir_promise.then(
 		() => {
-			this.logger.log({file: FILENAME, function: FUNCTION_NAME, level: 'debug', message: `File written successfully.`});
-			return Promise.resolve();
-		},
-		( error ) => {
-			this.logger.log({file: FILENAME, function: FUNCTION_NAME, level: 'debug', message: `Caught this error in ${FUNCTION_NAME}: ${error}`});
-			throw error;
+			return FSNS.promises.writeFile( filepath_string, json_string, 'utf8' ).then(
+				() => {
+					this.logger.log({file: FILENAME, function: FUNCTION_NAME, level: 'debug', message: `File written successfully.`});
+					return Promise.resolve();
+				},
+				( error ) => {
+					this.logger.log({file: FILENAME, function: FUNCTION_NAME, level: 'debug', message: `Caught this error in ${FUNCTION_NAME}: ${error}`});
+					throw error;
+				}
+			);
 		}
 	);
 	return _return;
