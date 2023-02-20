@@ -1,6 +1,6 @@
 {
 	"name": "cno-config-manager",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Yet another simple but robust config manager for NodeJS.",
 	"main": "main.js",
 	"scripts": {
